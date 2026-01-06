@@ -1,11 +1,23 @@
-const express = require("express");
-const dotenv = require("dotenv");
-const cors = require("cors");
-const mongoose = require("mongoose");
-const path = require("path");
+import express from "express";
+import dotenv from "dotenv";
+import cors from "cors";
+import mongoose from "mongoose";
+import path from "path";
+import { fileURLToPath } from "url";
+
+// Routes
+import authRoutes from "./routes/auth.js";
+import projectRoutes from "./routes/projects.js";
+import skillRoutes from "./routes/skills.js";
+import messageRoutes from "./routes/messages.js";
+import experienceRoutes from "./routes/experience.js";
 
 // Load env variables
 dotenv.config();
+
+// __dirname replacement in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
@@ -27,18 +39,18 @@ mongoose
   });
 
 // Routes
-app.use("/api/auth", require("./routes/auth"));
-app.use("/api/projects", require("./routes/projects"));
-app.use("/api/skills", require("./routes/skills"));
-app.use("/api/messages", require("./routes/messages"));
-app.use("/api/experience", require("./routes/experience"));
+app.use("/api/auth", authRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/skills", skillRoutes);
+app.use("/api/messages", messageRoutes);
+app.use("/api/experience", experienceRoutes);
 
 // Health check
 app.get("/", (req, res) => {
   res.send("Server is running 🚀");
 });
 
-// Optional: Dev CSP fix (allow inline styles/scripts for dev)
+// Optional: Dev CSP fix
 if (process.env.NODE_ENV === "development") {
   app.use((req, res, next) => {
     res.setHeader(
