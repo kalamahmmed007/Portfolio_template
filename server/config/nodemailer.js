@@ -1,15 +1,29 @@
-const nodemailer = require("nodemailer");
-const dotenv = require("dotenv");
-
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  host: process.env.EMAIL_HOST || "smtp.ethereal.email",
-  port: process.env.EMAIL_PORT || 587,
-  auth: {
-    user: process.env.EMAIL_USER || "your_user@ethereal.email",
-    pass: process.env.EMAIL_PASS || "your_password",
-  },
-});
+export const sendEmail = async ({ to, subject, text, html }) => {
+  try {
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: process.env.SMTP_PORT || 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: process.env.SMTP_USER || '0057kalamahmmed@gmail.com', 
+        pass: process.env.SMTP_PASS || 'kalam@mim1',
+      },
+    });
 
-module.exports = transporter;
+    const info = await transporter.sendMail({
+      from: `"Portfolio Admin" <${process.env.SMTP_USER || 'yourmail@gmail.com'}>`,
+      to,
+      subject,
+      text,
+      html,
+    });
+
+    console.log('Message sent: %s', info.messageId);
+  } catch (error) {
+    console.error('Email not sent: ', error);
+  }
+};

@@ -10,4 +10,4 @@ cloudinary.config({
   secure: true,
 });
 
-module.exports = cloudinary;
+export default cloudinary;

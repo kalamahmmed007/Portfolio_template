@@ -1,262 +1,307 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronDown, Github, Linkedin, Mail, FileText, Code2, Sparkles } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { 
+  Download, 
+  ArrowRight, 
+  Github, 
+  Linkedin, 
+  Mail,
+  MapPin,
+  Code,
+  Sparkles
+} from 'lucide-react';
 
 const Hero = () => {
-  const [currentRole, setCurrentRole] = useState(0);
   const [displayText, setDisplayText] = useState('');
+  const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [charIndex, setCharIndex] = useState(0);
-
+  
   const roles = [
-    "Full Stack Developer",
-    "MERN Stack Expert",
-    "Problem Solver",
-    "UI/UX Enthusiast",
-    "Clean Code Advocate"
+    'Full Stack Developer',
+    'MERN Stack Developer',
+    'React Developer',
+    'UI/UX Enthusiast',
   ];
 
+  // Typing animation effect
   useEffect(() => {
-    const currentText = roles[currentRole];
-    const typingSpeed = isDeleting ? 50 : 100;
-    const pauseTime = 2000;
-
-    const timer = setTimeout(() => {
-      if (!isDeleting && charIndex < currentText.length) {
-        setDisplayText(currentText.substring(0, charIndex + 1));
-        setCharIndex(charIndex + 1);
-      } else if (isDeleting && charIndex > 0) {
-        setDisplayText(currentText.substring(0, charIndex - 1));
-        setCharIndex(charIndex - 1);
-      } else if (!isDeleting && charIndex === currentText.length) {
-        setTimeout(() => setIsDeleting(true), pauseTime);
-      } else if (isDeleting && charIndex === 0) {
-        setIsDeleting(false);
-        setCurrentRole((currentRole + 1) % roles.length);
+    const currentRole = roles[currentRoleIndex];
+    const timeout = setTimeout(() => {
+      if (!isDeleting) {
+        if (displayText.length < currentRole.length) {
+          setDisplayText(currentRole.slice(0, displayText.length + 1));
+        } else {
+          setTimeout(() => setIsDeleting(true), 2000);
+        }
+      } else {
+        if (displayText.length > 0) {
+          setDisplayText(displayText.slice(0, -1));
+        } else {
+          setIsDeleting(false);
+          setCurrentRoleIndex((prev) => (prev + 1) % roles.length);
+        }
       }
-    }, typingSpeed);
+    }, isDeleting ? 50 : 100);
 
-    return () => clearTimeout(timer);
-  }, [charIndex, isDeleting, currentRole]);
+    return () => clearTimeout(timeout);
+  }, [displayText, isDeleting, currentRoleIndex]);
+
+  const scrollToSection = (sectionId) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      const offsetTop = element.offsetTop - 80;
+      window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+    }
+  };
+
+  const stats = [
+    { value: '50+', label: 'Projects Completed' },
+    { value: '30+', label: 'Happy Clients' },
+    { value: '3+', label: 'Years Experience' },
+    { value: '15+', label: 'Technologies' },
+  ];
 
   const socialLinks = [
-    { icon: <Github className="h-5 w-5" />, label: "GitHub", href: "#" },
-    { icon: <Linkedin className="h-5 w-5" />, label: "LinkedIn", href: "#" },
-    { icon: <Mail className="h-5 w-5" />, label: "Email", href: "#" },
-    { icon: <FileText className="h-5 w-5" />, label: "Resume", href: "#" }
-  ];
-
-  const floatingIcons = [
-    { Icon: Code2, delay: "0s", position: "top-20 left-10" },
-    { Icon: Sparkles, delay: "0.5s", position: "top-40 right-20" },
-    { Icon: Code2, delay: "1s", position: "bottom-40 left-20" },
-    { Icon: Sparkles, delay: "1.5s", position: "bottom-20 right-10" }
+    { icon: Github, href: '#', label: 'GitHub', color: 'hover:text-gray-400' },
+    { icon: Linkedin, href: '#', label: 'LinkedIn', color: 'hover:text-blue-400' },
+    { icon: Mail, href: 'mailto:your.email@example.com', label: 'Email', color: 'hover:text-red-400' },
   ];
 
   return (
-    <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-white">
-      
+    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gray-900 pt-20">
       {/* Animated Background Elements */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden">
         {/* Gradient Orbs */}
-        <div className="animate-blob absolute left-0 top-0 h-96 w-96 rounded-full bg-red-200 opacity-20 mix-blend-multiply blur-3xl filter"></div>
-        <div className="animate-blob animation-delay-2000 absolute right-0 top-0 h-96 w-96 rounded-full bg-gray-300 opacity-20 mix-blend-multiply blur-3xl filter"></div>
-        <div className="animate-blob animation-delay-4000 absolute bottom-0 left-1/2 h-96 w-96 rounded-full bg-red-300 opacity-20 mix-blend-multiply blur-3xl filter"></div>
+        <div className="absolute top-1/4 -left-1/4 w-96 h-96 bg-red-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 -right-1/4 w-96 h-96 bg-red-700/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
         
-        {/* Floating Icons */}
-        {floatingIcons.map((item, index) => (
+        {/* Grid Pattern */}
+        <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:50px_50px]"></div>
+        
+        {/* Floating Particles */}
+        {[...Array(20)].map((_, i) => (
           <div
-            key={index}
-            className={`absolute ${item.position} text-gray-200 opacity-30`}
+            key={i}
+            className="absolute w-1 h-1 bg-red-500/30 rounded-full animate-float"
             style={{
-              animation: `float 6s ease-in-out infinite`,
-              animationDelay: item.delay
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 5}s`,
+              animationDuration: `${5 + Math.random() * 10}s`,
             }}
-          >
-            <item.Icon className="h-12 w-12" />
-          </div>
+          ></div>
         ))}
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
-        <div className="text-center">
-          
-          {/* Greeting Badge */}
-          <div className="animate-fade-in mb-8 inline-flex items-center gap-2 rounded-full border border-red-200 bg-red-50 px-6 py-2">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-red-600"></span>
-            <span className="text-sm font-medium text-red-600">Available for freelance</span>
-          </div>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left Content */}
+          <div className="space-y-8 text-center lg:text-left">
+            {/* Greeting Badge */}
+            <div className="inline-flex items-center space-x-2 px-4 py-2 bg-gray-800/50 backdrop-blur-sm border border-red-500/30 rounded-full">
+              <Sparkles className="w-4 h-4 text-red-500 animate-pulse" />
+              <span className="text-sm text-gray-300">Welcome to my Portfolio</span>
+            </div>
 
-          {/* Main Heading */}
-          <h1 className="animate-slide-up mb-6 text-5xl font-bold text-gray-900 sm:text-6xl md:text-7xl lg:text-8xl">
-            Hi, I'm <span className="text-red-600">Your Name</span>
-          </h1>
+            {/* Main Heading */}
+            <div className="space-y-4">
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold">
+                <span className="text-white">Hi, I'm </span>
+                <span className="bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent">
+                  Your Name
+                </span>
+              </h1>
+              
+              {/* Animated Role */}
+              <div className="flex items-center justify-center lg:justify-start space-x-2 h-12">
+                <Code className="w-6 h-6 text-red-500" />
+                <h2 className="text-2xl sm:text-3xl font-semibold text-gray-300">
+                  {displayText}
+                  <span className="inline-block w-0.5 h-8 bg-red-500 ml-1 animate-blink"></span>
+                </h2>
+              </div>
+            </div>
 
-          {/* Animated Role Text */}
-          <div className="mb-8 h-16 sm:h-20 md:h-24">
-            <h2 className="animate-slide-up animation-delay-200 text-3xl font-bold text-gray-800 sm:text-4xl md:text-5xl">
-              I'm a{' '}
-              <span className="inline-block min-w-[300px] text-left text-red-600 sm:min-w-[400px]">
-                {displayText}
-                <span className="animate-blink">|</span>
-              </span>
-            </h2>
-          </div>
+            {/* Description */}
+            <p className="text-lg text-gray-400 leading-relaxed max-w-xl mx-auto lg:mx-0">
+              Passionate about creating beautiful, functional, and user-friendly web applications. 
+              Specialized in MERN stack development with a keen eye for design and performance.
+            </p>
 
-          {/* Description */}
-          <p className="animate-slide-up animation-delay-400 mx-auto mb-12 max-w-3xl text-lg leading-relaxed text-gray-600 sm:text-xl md:text-2xl">
-            I craft beautiful, functional web applications with modern technologies. 
-            Passionate about creating seamless user experiences and writing clean, 
-            efficient code that makes a difference.
-          </p>
+            {/* Location */}
+            <div className="flex items-center justify-center lg:justify-start space-x-2 text-gray-400">
+              <MapPin className="w-5 h-5 text-red-500" />
+              <span>Based in Dhaka, Bangladesh</span>
+            </div>
 
-          {/* CTA Buttons */}
-          <div className="animate-slide-up animation-delay-600 mb-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
-              href="#projects"
-              className="group flex items-center gap-2 rounded-lg bg-red-600 px-8 py-4 font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-900 hover:shadow-xl"
-            >
-              View My Work
-              <ChevronDown className="h-5 w-5 transition-transform group-hover:translate-y-1" />
-            </a>
-            <a
-              href="#contact"
-              className="rounded-lg border-2 border-gray-900 bg-white px-8 py-4 font-semibold text-gray-900 shadow-lg transition-all duration-300 hover:scale-105 hover:bg-gray-900 hover:text-white hover:shadow-xl"
-            >
-              Get In Touch
-            </a>
-          </div>
-
-          {/* Social Links */}
-          <div className="animate-slide-up animation-delay-800 flex items-center justify-center gap-4">
-            {socialLinks.map((link, index) => (
-              <a
-                key={index}
-                href={link.href}
-                aria-label={link.label}
-                className="group rounded-full bg-gray-100 p-3 text-gray-700 transition-all duration-300 hover:scale-110 hover:bg-red-600 hover:text-white hover:shadow-lg"
+            {/* CTA Buttons */}
+            <div className="flex flex-wrap gap-4 justify-center lg:justify-start">
+              <button
+                onClick={() => scrollToSection('contact')}
+                className="group px-8 py-3.5 bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-semibold rounded-lg shadow-lg shadow-red-500/30 hover:shadow-red-500/50 transition-all duration-300 hover:scale-105 flex items-center space-x-2"
               >
-                {link.icon}
-              </a>
-            ))}
+                <span>Hire Me</span>
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+              </button>
+              
+              <button
+                onClick={() => window.open('/resume.pdf', '_blank')}
+                className="px-8 py-3.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 hover:border-red-500 text-white font-semibold rounded-lg transition-all duration-300 hover:scale-105 flex items-center space-x-2"
+              >
+                <Download className="w-5 h-5" />
+                <span>Download CV</span>
+              </button>
+            </div>
+
+            {/* Social Links */}
+            <div className="flex items-center space-x-4 justify-center lg:justify-start">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`p-3 rounded-lg bg-gray-800 border border-gray-700 text-gray-400 ${social.color} hover:border-red-500 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-red-500/20`}
+                  aria-label={social.label}
+                >
+                  <social.icon className="w-5 h-5" />
+                </a>
+              ))}
+            </div>
           </div>
 
-        </div>
-
-        {/* Tech Stack Marquee */}
-        <div className="animate-slide-up animation-delay-1000 mt-20">
-          <p className="mb-6 text-center text-sm font-medium text-gray-500">TECH STACK</p>
-          <div className="relative overflow-hidden">
-            <div className="animate-scroll flex gap-8">
-              {["React", "Node.js", "MongoDB", "Express", "Tailwind CSS", "JavaScript", "TypeScript", "Next.js", "React", "Node.js", "MongoDB", "Express"].map((tech, index) => (
-                <div
-                  key={index}
-                  className="flex-shrink-0 rounded-lg border border-gray-200 bg-gray-100 px-6 py-3 font-medium text-gray-700 transition-colors hover:border-red-600 hover:text-red-600"
-                >
-                  {tech}
+          {/* Right Content - Image/Avatar */}
+          <div className="relative flex items-center justify-center">
+            {/* Decorative Elements */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-72 h-72 bg-gradient-to-br from-red-500/30 to-red-700/30 rounded-full blur-3xl animate-pulse"></div>
+            </div>
+            
+            {/* Profile Image Container */}
+            <div className="relative">
+              {/* Rotating Border */}
+              <div className="absolute -inset-4 bg-gradient-to-r from-red-500 via-red-600 to-red-700 rounded-full opacity-75 blur-lg animate-spin-slow"></div>
+              
+              {/* Image */}
+              <div className="relative w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-full overflow-hidden border-4 border-gray-800 shadow-2xl">
+                <div className="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-red-500 to-red-700 rounded-full flex items-center justify-center mb-4">
+                      <span className="text-6xl font-bold text-white">YN</span>
+                    </div>
+                    <p className="text-gray-400 text-sm">Your Profile Image</p>
+                  </div>
                 </div>
-              ))}
+              </div>
+              
+              {/* Floating Badge */}
+              <div className="absolute -bottom-4 -right-4 px-6 py-3 bg-gray-800 border-2 border-red-500 rounded-full shadow-lg shadow-red-500/30 animate-bounce-slow">
+                <span className="text-white font-semibold flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                  <span>Available for Work</span>
+                </span>
+              </div>
             </div>
           </div>
         </div>
 
+        {/* Stats Section */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-20">
+          {stats.map((stat, index) => (
+            <div
+              key={index}
+              className="text-center p-6 bg-gray-800/50 backdrop-blur-sm border border-gray-700 hover:border-red-500 rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-red-500/20"
+            >
+              <div className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-red-500 to-red-700 bg-clip-text text-transparent mb-2">
+                {stat.value}
+              </div>
+              <div className="text-sm text-gray-400">{stat.label}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 transform animate-bounce">
-        <ChevronDown className="h-8 w-8 text-gray-400" />
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <div className="w-6 h-10 border-2 border-gray-600 rounded-full flex justify-center">
+          <div className="w-1 h-3 bg-red-500 rounded-full mt-2 animate-scroll"></div>
+        </div>
       </div>
 
-      {/* Custom Styles */}
       <style jsx>{`
-        @keyframes blob {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        
         @keyframes float {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          50% { transform: translateY(-20px) rotate(5deg); }
+          0%, 100% {
+            transform: translateY(0) translateX(0);
+          }
+          25% {
+            transform: translateY(-20px) translateX(10px);
+          }
+          50% {
+            transform: translateY(-10px) translateX(-10px);
+          }
+          75% {
+            transform: translateY(-30px) translateX(5px);
+          }
         }
         
-        @keyframes scroll {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        
-        @keyframes slide-up {
+        @keyframes spin-slow {
           from {
-            opacity: 0;
-            transform: translateY(30px);
+            transform: rotate(0deg);
           }
           to {
-            opacity: 1;
+            transform: rotate(360deg);
+          }
+        }
+        
+        @keyframes bounce-slow {
+          0%, 100% {
             transform: translateY(0);
+          }
+          50% {
+            transform: translateY(-10px);
           }
         }
         
         @keyframes blink {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0; }
+          0%, 49% {
+            opacity: 1;
+          }
+          50%, 100% {
+            opacity: 0;
+          }
         }
         
-        .animate-blob {
-          animation: blob 7s infinite;
+        @keyframes scroll {
+          0% {
+            transform: translateY(0);
+            opacity: 0;
+          }
+          50% {
+            opacity: 1;
+          }
+          100% {
+            transform: translateY(20px);
+            opacity: 0;
+          }
         }
         
-        .animation-delay-2000 {
-          animation-delay: 2s;
+        .animate-float {
+          animation: float linear infinite;
         }
         
-        .animation-delay-4000 {
-          animation-delay: 4s;
+        .animate-spin-slow {
+          animation: spin-slow 8s linear infinite;
         }
         
-        .animate-scroll {
-          animation: scroll 20s linear infinite;
-        }
-        
-        .animate-fade-in {
-          animation: fade-in 1s ease-out;
-        }
-        
-        .animate-slide-up {
-          animation: slide-up 1s ease-out;
-        }
-        
-        .animation-delay-200 {
-          animation-delay: 0.2s;
-          animation-fill-mode: both;
-        }
-        
-        .animation-delay-400 {
-          animation-delay: 0.4s;
-          animation-fill-mode: both;
-        }
-        
-        .animation-delay-600 {
-          animation-delay: 0.6s;
-          animation-fill-mode: both;
-        }
-        
-        .animation-delay-800 {
-          animation-delay: 0.8s;
-          animation-fill-mode: both;
-        }
-        
-        .animation-delay-1000 {
-          animation-delay: 1s;
-          animation-fill-mode: both;
+        .animate-bounce-slow {
+          animation: bounce-slow 2s ease-in-out infinite;
         }
         
         .animate-blink {
           animation: blink 1s step-end infinite;
+        }
+        
+        .animate-scroll {
+          animation: scroll 2s ease-in-out infinite;
         }
       `}</style>
     </section>
