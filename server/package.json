@@ -20,7 +20,7 @@
     "mern",
     "backend"
   ],
-  "author": "Your Name",
+  "author": "Kalam Ahmmed",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
